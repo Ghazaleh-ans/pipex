@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/07 15:19:44 by gansari           #+#    #+#             */
+/*   Updated: 2025/02/07 15:19:47 by gansari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 void	ft_exec(char *cmd, char **envp)
@@ -76,12 +88,12 @@ void	pipex(int argc, char **argv, char **envp)
 	if (pid1 < 0)
 		ft_perror("Error(fork1)");
 	if (pid1 == 0)
-		first_cmd_exec(fd, argv,envp);
+		first_cmd_exec(fd, argv, envp);
 	pid2 = fork();
 	if (pid2 < 0)
 		ft_perror("Error(fork2)");
 	if (pid2 == 0)
-		second_cmd_exec(fd, argv,envp);
+		second_cmd_exec(fd, argv, envp);
 	close(fd[0]);
 	close(fd[1]);
 	waitpid(pid1, NULL, 0);
