@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
-#include <stdio.h>
 
 void	exec_cmd(char *cmd, char **envp)
 {
@@ -66,81 +65,34 @@ void	ft_exec(char *cmd, char **envp)
 	free_array(paths);
 	ft_perror("ERROR(no execution)");
 }
-void	write_to_limiter(int *fd, char *limiter)
+
+void	execute_final_command(char **argv, char **envp, int argc)
 {
-	char	*line;
-
-	close(fd[0]);
-	ft_putstr_fd("pipe heredoc> ", 1);
-	line = get_next_line(0);
-	while (line)
-	{
-		clean_line(line);
-		if (ft_strcmp(limiter, line) == 0)
-		{
-			free(line);
-			close(fd[1]);
-			exit(EXIT_SUCCESS);
-		}
-		ft_putstr_fd("pipe heredoc> ", 1);
-		write_line_to_fd(fd[1], line);
-		free(line);
-		line = get_next_line(0);
-	}
-	free(line);
-	close(fd[1]);
-	ft_perror("ERROR(write data fail in heredoc)");
-}
-
-void	here_doc(int argc, char **argv)
-{
-	int		fd[2];
-	int		pid;
-
-	if (argc < 6)
-		ft_error("Error: wrong count of arguments");
-	if (pipe(fd) == -1)
-		perror("ERROR(here_doc pipe)");
-	pid = fork();
+	int pid = fork();
 	if (pid == -1)
-		ft_perror("ERROR(here_doc fork)");
+		ft_perror("ERROR(fork1)");
 	if (pid == 0)
-		write_to_limiter(fd, argv[2]);
-	close(fd[1]);
-	if (dup2(fd[0], STDIN_FILENO) == -1)
-		ft_perror("ERROR(here_doc dup)");
-	close(fd[0]);
-	waitpid(pid, NULL, 0);
+		ft_exec(argv[argc - 2], envp);
 }
 
-void	pipex_bonus(int argc, char **argv, char **envp)
+void	process_commands(char **argv, char **envp, int num, int argc)
 {
-	int	pid;
+	while (num < argc - 2)
+		exec_cmd(argv[num++], envp);
+}
+
+void pipex_bonus(int argc, char **argv, char **envp)
+{
 	int	num;
 	int	fd_in;
 	int	fd_out;
 
 	if (ft_strcmp(argv[1], "here_doc") == 0)
-	{
-		num = 3;
-		here_doc(argc, argv);
-		fd_out = file_opener(argv[argc - 1], 'h');
-	}
+		setup_here_doc(argc, argv, &num, &fd_out);
 	else
-	{
-		num = 2;
-		fd_in = file_opener(argv[1], 'I');
-		fd_out = file_opener(argv[argc - 1], 'O');
-		if (dup2(fd_in, STDIN_FILENO) == -1)
-			ft_perror("ERROR(dup2 input multiple pipe)");
-	}
-	while (num < argc - 2)
-		exec_cmd(argv[num++], envp);
+		setup_multiple_pipes(argv, argc, &num, &fd_in, &fd_out);
+	process_commands(argv, envp, num, argc);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 		ft_perror("ERROR(dup2 output)");
-	pid = fork();
-	if (pid == -1)
-		ft_perror("ERROR(fork1)");
-	if (pid == 0)
-		ft_exec(argv[argc - 2], envp);
+	execute_final_command(argv, envp, argc);
 }

@@ -26,16 +26,23 @@
 void	pipex_bonus(int argc, char **argv, char **envp);
 void	exec_cmd(char *cmd, char **envp);
 void	ft_exec(char *cmd, char **envp);
-void	here_doc(int argc, char **argv);
-void	write_to_limiter(int *fd, char *limiter);
+void	execute_final_command(char **argv, char **envp, int argc);
+void	process_commands(char **argv, char **envp, int num, int argc);
 
 //utils
 int		file_opener(char *path, char flag);
 char	**parse_path(char **envp);
 char	*ft_makepath(char const *path, char const *cmd);
 void	free_array(char **arr_to_free);
+
+//heredoc
+void	setup_here_doc(int argc, char **argv, int *num, int *fd_out);
 void	clean_line(char *line);
 void	write_line_to_fd(int fd, char *line);
+void	here_doc(int argc, char **argv);
+void	write_to_limiter(int *fd, char *limiter);
 
+//multiple pipes
+void	setup_multiple_pipes(char **argv, int argc, int *num, int *fd_in, int *fd_out);
 
 #endif
