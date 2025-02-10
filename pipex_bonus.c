@@ -115,6 +115,7 @@ void	here_doc(int argc, char **argv)
 
 void	pipex_bonus(int argc, char **argv, char **envp)
 {
+	int	pid;
 	int	num;
 	int	fd_in;
 	int	fd_out;
@@ -137,5 +138,9 @@ void	pipex_bonus(int argc, char **argv, char **envp)
 		exec_cmd(argv[num++], envp);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 		ft_perror("ERROR(dup2 output)");
-	ft_exec(argv[argc - 2], envp);
+	pid = fork();
+	if (pid == -1)
+		ft_perror("ERROR(fork1)");
+	if (pid == 0)
+		ft_exec(argv[argc - 2], envp);
 }

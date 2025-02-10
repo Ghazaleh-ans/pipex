@@ -81,7 +81,7 @@ void	clean_line(char *line)
 void	write_line_to_fd(int fd, char *line)
 {
 	if (write(fd, line, ft_strlen(line)) == -1)
-		perror("ERROR - 11");
+		perror("ERROR(write the line to fd)");
 	if (write(fd, "\n", 1) == -1)
-		perror("ERROR - 12");
+		perror("ERROR(write new line to fd)");
 }
