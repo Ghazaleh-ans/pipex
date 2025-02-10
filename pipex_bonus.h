@@ -23,11 +23,15 @@
 # include "./Libft/libft.h"
 
 //main functions
-void	pipex(int argc, char **argv, char **envp);
-void	here_doc(int argc, char **argv);
+void	pipex_bonus(int argc, char **argv, char **envp);
+void	exec_cmd(char *cmd, char *envp[]);
+void	ft_exec(char *cmd, char **envp);
 
 //utils
-
+int		file_opener(char *path, char flag);
+char	**parse_path(char *envp[]);
+char	*ft_makepath(char const *path, char const *cmd);
+void	free_array(char **arr_to_free);
 
 
 #endif
