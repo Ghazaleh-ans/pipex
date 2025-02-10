@@ -73,6 +73,7 @@ void	execute_final_command(char **argv, char **envp, int argc)
 		ft_perror("ERROR(fork1)");
 	if (pid == 0)
 		ft_exec(argv[argc - 2], envp);
+	waitpid(pid, NULL, 0);
 }
 
 void	process_commands(char **argv, char **envp, int num, int argc)
