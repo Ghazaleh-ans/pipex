@@ -18,21 +18,21 @@ void	exec_cmd(char *cmd, char **envp)
 	int	pid;
 
 	if (pipe(fd) == -1)
-		ft_perror("ERROR - 3");
+		ft_perror("ERROR(pipe in exec_cmd)");
 	pid = fork();
 	if (pid == -1)
-		ft_perror("ERROR - 4");
+		ft_perror("ERROR(fork in exec_cmd)");
 	if (pid == 0)
 	{
 		close(fd[0]);
 		if (dup2(fd[1], STDOUT_FILENO) == -1)
-			ft_perror("ERROR - 5");
+			ft_perror("ERROR(dup2 in exec_cmd)");
 		close(fd[1]);
 		ft_exec(cmd, envp);
 	}
 	close(fd[1]);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
-		ft_perror("ERROR - 6");
+		ft_perror("ERROR(dup2 in exec_cmd)");
 	close(fd[0]);
 	waitpid(pid, NULL, 0);
 
