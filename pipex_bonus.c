@@ -12,7 +12,7 @@
 
 #include "pipex_bonus.h"
 
-void	exec_cmd(char *cmd, char *envp[])
+void	exec_cmd(char *cmd, char **envp)
 {
 	int	fd[2];
 	int	pid;
@@ -66,28 +66,34 @@ void	ft_exec(char *cmd, char **envp)
 	ft_perror("ERROR(no execution)");
 }
 
-void	pipex_bonus(int argc, char **argv, char **envp)
+void	execute_final_command(char **argv, char **envp, int argc)
+{
+	int pid = fork();
+	if (pid == -1)
+		ft_perror("ERROR(fork1)");
+	if (pid == 0)
+		ft_exec(argv[argc - 2], envp);
+	waitpid(pid, NULL, 0);
+}
+
+void	process_commands(char **argv, char **envp, int num, int argc)
+{
+	while (num < argc - 2)
+		exec_cmd(argv[num++], envp);
+}
+
+void pipex_bonus(int argc, char **argv, char **envp)
 {
 	int	num;
 	int	fd_in;
 	int	fd_out;
 
 	if (ft_strcmp(argv[1], "here_doc") == 0)
-	{
-		num = 0;
-
-	}
+		setup_here_doc(argc, argv, &num, &fd_out);
 	else
-	{
-		num = 2;
-		fd_in = file_opener(argv[1], 'I');
-		fd_out = file_opener(argv[argc - 1], 'O');
-		if (dup2(fd_in, STDIN_FILENO) == -1)
-			ft_perror("ERROR - 1");
-	}
-	while (num < argc - 2)
-		exec_cmd(argv[num++], envp);
+		setup_multiple_pipes(argv, argc, &num, &fd_in, &fd_out);
+	process_commands(argv, envp, num, argc);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
-		ft_perror("ERROR - 2");
-	ft_exec(argv[argc - 2], envp);
+		ft_perror("ERROR(dup2 output)");
+	execute_final_command(argv, envp, argc);
 }
