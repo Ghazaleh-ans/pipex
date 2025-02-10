@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-char	**parse_path(char *envp[])
+char	**parse_path(char **envp)
 {
 	int		i;
 	char	**paths;

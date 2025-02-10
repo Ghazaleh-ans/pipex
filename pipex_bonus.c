@@ -11,8 +11,9 @@
 /* ************************************************************************** */
 
 #include "pipex_bonus.h"
+#include <stdio.h>
 
-void	exec_cmd(char *cmd, char *envp[])
+void	exec_cmd(char *cmd, char **envp)
 {
 	int	fd[2];
 	int	pid;
@@ -65,6 +66,52 @@ void	ft_exec(char *cmd, char **envp)
 	free_array(paths);
 	ft_perror("ERROR(no execution)");
 }
+void	write_to_limiter(int *fd, char *limiter)
+{
+	char	*line;
+
+	close(fd[0]);
+	ft_putstr_fd("pipe heredoc> ", 1);
+	line = get_next_line(0);
+	while (line)
+	{
+		clean_line(line);
+		if (ft_strcmp(limiter, line) == 0)
+		{
+			free(line);
+			close(fd[1]);
+			exit(EXIT_SUCCESS);
+		}
+		ft_putstr_fd("pipe heredoc> ", 1);
+		write_line_to_fd(fd[1], line);
+		free(line);
+		line = get_next_line(0);
+	}
+	free(line);
+	close(fd[1]);
+	ft_perror("ERROR(write data fail in heredoc)");
+}
+
+void	here_doc(int argc, char **argv)
+{
+	int		fd[2];
+	int		pid;
+
+	if (argc < 6)
+		ft_error("Error: wrong count of arguments");
+	if (pipe(fd) == -1)
+		perror("ERROR(here_doc pipe)");
+	pid = fork();
+	if (pid == -1)
+		ft_perror("ERROR(here_doc fork)");
+	if (pid == 0)
+		write_to_limiter(fd, argv[2]);
+	close(fd[1]);
+	if (dup2(fd[0], STDIN_FILENO) == -1)
+		ft_perror("ERROR(here_doc dup)");
+	close(fd[0]);
+	waitpid(pid, NULL, 0);
+}
 
 void	pipex_bonus(int argc, char **argv, char **envp)
 {
@@ -74,8 +121,9 @@ void	pipex_bonus(int argc, char **argv, char **envp)
 
 	if (ft_strcmp(argv[1], "here_doc") == 0)
 	{
-		num = 0;
-
+		num = 3;
+		here_doc(argc, argv);
+		fd_out = file_opener(argv[argc - 1], 'h');
 	}
 	else
 	{
@@ -83,11 +131,11 @@ void	pipex_bonus(int argc, char **argv, char **envp)
 		fd_in = file_opener(argv[1], 'I');
 		fd_out = file_opener(argv[argc - 1], 'O');
 		if (dup2(fd_in, STDIN_FILENO) == -1)
-			ft_perror("ERROR - 1");
+			ft_perror("ERROR(dup2 input multiple pipe)");
 	}
 	while (num < argc - 2)
 		exec_cmd(argv[num++], envp);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
-		ft_perror("ERROR - 2");
+		ft_perror("ERROR(dup2 output)");
 	ft_exec(argv[argc - 2], envp);
 }

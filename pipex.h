@@ -29,7 +29,7 @@ void	second_cmd_exec(int *fd, char **argv, char **envp);
 void	ft_exec(char *cmd, char **envp);
 
 //utils
-char	**parse_path(char *envp[]);
+char	**parse_path(char **envp);
 char	*ft_makepath(char const *path, char const *cmd);
 void	free_array(char **arr_to_free);
 #endif

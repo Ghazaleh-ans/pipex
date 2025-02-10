@@ -24,14 +24,18 @@
 
 //main functions
 void	pipex_bonus(int argc, char **argv, char **envp);
-void	exec_cmd(char *cmd, char *envp[]);
+void	exec_cmd(char *cmd, char **envp);
 void	ft_exec(char *cmd, char **envp);
+void	here_doc(int argc, char **argv);
+void	write_to_limiter(int *fd, char *limiter);
 
 //utils
 int		file_opener(char *path, char flag);
-char	**parse_path(char *envp[]);
+char	**parse_path(char **envp);
 char	*ft_makepath(char const *path, char const *cmd);
 void	free_array(char **arr_to_free);
+void	clean_line(char *line);
+void	write_line_to_fd(int fd, char *line);
 
 
 #endif

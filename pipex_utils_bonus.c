@@ -27,7 +27,7 @@ int	file_opener(char *path, char flag)
 		ft_perror("ERROR (input or output file)");
 	return (fd);
 }
-char	**parse_path(char *envp[])
+char	**parse_path(char **envp)
 {
 	int		i;
 	char	**paths;
@@ -67,4 +67,21 @@ void	free_array(char **arr_to_free)
 		i++;
 	}
 	free(arr_to_free);
+}
+void	clean_line(char *line)
+{
+	char	*trimmed_line;
+
+	trimmed_line = line;
+	while (*trimmed_line && *trimmed_line != '\n')
+		trimmed_line++;
+	*trimmed_line = '\0';
+}
+
+void	write_line_to_fd(int fd, char *line)
+{
+	if (write(fd, line, ft_strlen(line)) == -1)
+		perror("ERROR - 11");
+	if (write(fd, "\n", 1) == -1)
+		perror("ERROR - 12");
 }
