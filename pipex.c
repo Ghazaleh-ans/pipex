@@ -63,7 +63,11 @@ void	second_cmd_exec(int *fd, char **argv, char **envp)
 
 	fd_out = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0777);
 	if (fd_out < 0)
+	{
+		close(fd[0]);
+		close(fd[1]);
 		ft_perror("ERROR(opening output file)");
+	}
 	if (dup2(fd[0], STDIN_FILENO) == -1)
 		ft_perror("ERROR(dup2 STDIN)");
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
