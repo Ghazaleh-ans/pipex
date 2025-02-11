@@ -27,6 +27,7 @@ int	file_opener(char *path, char flag)
 		ft_perror("ERROR (input or output file)");
 	return (fd);
 }
+
 char	**parse_path(char **envp)
 {
 	int		i;

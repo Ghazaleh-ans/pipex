@@ -42,7 +42,4 @@ void	write_line_to_fd(int fd, char *line);
 void	here_doc(int argc, char **argv);
 void	write_to_limiter(int *fd, char *limiter);
 
-//multiple pipes
-void	setup_multiple_pipes(char **argv, int argc, int *num, int *fd_in, int *fd_out);
-
 #endif

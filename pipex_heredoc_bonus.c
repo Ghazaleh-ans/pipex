@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_heredoc_bonus.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/11 11:54:17 by gansari           #+#    #+#             */
+/*   Updated: 2025/02/11 11:54:20 by gansari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex_bonus.h"
 
-void setup_here_doc(int argc, char **argv, int *num, int *fd_out)
+void	setup_here_doc(int argc, char **argv, int *num, int *fd_out)
 {
 	*num = 3;
 	here_doc(argc, argv);

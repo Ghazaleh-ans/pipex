@@ -1,7 +1,7 @@
 NAME        = pipex
 
 SRCS_FILES  = main.c pipex.c pipex_utils.c
-BONUS_FILES = main_bonus.c pipex_bonus.c pipex_utils_bonus.c pipex_heredoc_bonus.c pipex_multiple_pipes_bonus.c
+BONUS_FILES = main_bonus.c pipex_bonus.c pipex_utils_bonus.c pipex_heredoc_bonus.c
 
 SRCS_MAN    = $(SRCS_FILES)
 SRCS_BONUS  = $(BONUS_FILES)
