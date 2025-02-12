@@ -1,43 +1,32 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pipex.c                                            :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/07 15:19:44 by gansari           #+#    #+#             */
-/*   Updated: 2025/02/07 15:19:47 by gansari          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "pipex.h"
 
 void	ft_exec(char *cmd, char **envp)
 {
-	int		i;
 	char	**commands;
 	char	**paths;
 	char	*the_way;
+	int		i;
 
 	commands = ft_split(cmd, ' ');
 	paths = parse_path(envp);
-	if (paths == NULL)
-		ft_error("Error: no PATH");
+	if (!commands || !paths)
+		exit(1);
 	i = 0;
 	while (paths[i])
 	{
 		the_way = ft_makepath(paths[i], commands[0]);
-		if (access(the_way, F_OK) == 0)
+		if (the_way && access(the_way, X_OK) == 0)
 		{
-			if (execve(the_way, commands, NULL) == -1)
-				ft_perror("ERROR(executing cmd)");
+			execve(the_way, commands, envp);
+			free(the_way);
+			break ;
 		}
 		free(the_way);
 		i++;
 	}
 	free_array(commands);
 	free_array(paths);
-	ft_perror("ERROR(no execution)");
+	exit(1);
 }
 
 void	first_cmd_exec(int *fd, char **argv, char **envp)
@@ -46,11 +35,18 @@ void	first_cmd_exec(int *fd, char **argv, char **envp)
 
 	fd_in = open(argv[1], O_RDONLY);
 	if (fd_in < 0)
-		ft_perror("ERROR(opening input file)");
-	if (dup2(fd[1], STDOUT_FILENO) == -1)
-		ft_perror("ERROR(dup2 STDOUT)");
-	if (dup2(fd_in, STDIN_FILENO) == -1)
-		ft_perror("ERROR(dup2 STDIN)");
+	{
+		close(fd[0]);
+		close(fd[1]);
+		exit(1);
+	}
+	if (dup2(fd_in, STDIN_FILENO) == -1 || dup2(fd[1], STDOUT_FILENO) == -1)
+	{
+		close(fd_in);
+		close(fd[0]);
+		close(fd[1]);
+		exit(1);
+	}
 	close(fd[0]);
 	close(fd_in);
 	close(fd[1]);
@@ -66,40 +62,45 @@ void	second_cmd_exec(int *fd, char **argv, char **envp)
 	{
 		close(fd[0]);
 		close(fd[1]);
-		ft_perror("ERROR(opening output file)");
+		exit(1);
 	}
-	if (dup2(fd[0], STDIN_FILENO) == -1)
-		ft_perror("ERROR(dup2 STDIN)");
-	if (dup2(fd_out, STDOUT_FILENO) == -1)
-		ft_perror("ERROR(dup2 STDOUT)");
+	if (dup2(fd[0], STDIN_FILENO) == -1 || dup2(fd_out, STDOUT_FILENO) == -1)
+	{
+		close(fd_out);
+		close(fd[0]);
+		close(fd[1]);
+		exit(1);
+	}
 	close(fd[1]);
 	close(fd_out);
 	close(fd[0]);
 	ft_exec(argv[3], envp);
 }
 
-void	pipex(int argc, char **argv, char **envp)
+int	pipex(int argc, char **argv, char **envp)
 {
 	int	fd[2];
 	int	pid1;
 	int	pid2;
+	int	status;
 
 	if (argc != 5)
 		ft_error("Error: Wrong count of arguments -- argc != 5");
 	if (pipe(fd) == -1)
-		ft_perror("Error(pipe)");
+		return (1);
 	pid1 = fork();
 	if (pid1 < 0)
-		ft_perror("Error(fork1)");
+		return (1);
 	if (pid1 == 0)
 		first_cmd_exec(fd, argv, envp);
 	pid2 = fork();
 	if (pid2 < 0)
-		ft_perror("Error(fork2)");
+		return (1);
 	if (pid2 == 0)
 		second_cmd_exec(fd, argv, envp);
 	close(fd[0]);
 	close(fd[1]);
-	waitpid(pid1, NULL, 0);
-	waitpid(pid2, NULL, 0);
+	waitpid(pid1, &status, 0);
+	waitpid(pid2, &status, 0);
+	return ((status & 0xFF00) >> 8);
 }

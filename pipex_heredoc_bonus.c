@@ -1,69 +1,76 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   pipex_heredoc_bonus.c                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/11 11:54:17 by gansari           #+#    #+#             */
-/*   Updated: 2025/02/11 11:54:20 by gansari          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "pipex_bonus.h"
 
-void	setup_here_doc(int argc, char **argv, int *num, int *fd_out)
+int	here_doc(int argc, char **argv)
 {
-	*num = 3;
-	here_doc(argc, argv);
-	*fd_out = file_opener(argv[argc - 1], 'h');
-}
-
-void	here_doc(int argc, char **argv)
-{
-	int		fd[2];
-	int		pid;
+	int	fd[2];
+	int	pid;
+	int	status;
 
 	if (argc < 6)
-		ft_error("Error: wrong count of arguments");
+	{
+		ft_putstr_fd("Error: heredoc usage error\n", 2);
+		return (1);
+	}
 	if (pipe(fd) == -1)
-		perror("ERROR(here_doc pipe)");
+		return (1);
 	pid = fork();
 	if (pid == -1)
-		ft_perror("ERROR(here_doc fork)");
+		return (1);
 	if (pid == 0)
 		write_to_limiter(fd, argv[2]);
 	close(fd[1]);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
-		ft_perror("ERROR(here_doc dup)");
+	{
+		close(fd[0]);
+		return (1);
+	}
 	close(fd[0]);
-	waitpid(pid, NULL, 0);
+	waitpid(pid, &status, 0);
+	return ((status & 0xFF00) >> 8);
+}
+
+void	handle_heredoc_line(int fd, char *line, char *limiter, int *status)
+{
+	clean_line(line);
+	if (ft_strcmp(limiter, line) == 0)
+	{
+		free(line);
+		close(fd);
+		*status = 0;
+		exit(0);
+	}
+	ft_putstr_fd("pipe heredoc> ", 1);
+	if (write_line_to_fd(fd, line) == -1)
+		*status = 1;
+	free(line);
 }
 
 void	write_to_limiter(int *fd, char *limiter)
 {
 	char	*line;
+	int		status;
 
+	status = 0;
 	close(fd[0]);
 	ft_putstr_fd("pipe heredoc> ", 1);
 	line = get_next_line(0);
 	while (line)
 	{
-		clean_line(line);
-		if (ft_strcmp(limiter, line) == 0)
-		{
-			free(line);
-			close(fd[1]);
-			exit(EXIT_SUCCESS);
-		}
-		ft_putstr_fd("pipe heredoc> ", 1);
-		write_line_to_fd(fd[1], line);
-		free(line);
+		handle_heredoc_line(fd[1], line, limiter, &status);
 		line = get_next_line(0);
 	}
 	free(line);
 	close(fd[1]);
-	ft_perror("ERROR(write data fail in heredoc)");
+	exit(status);
+}
+
+int	write_line_to_fd(int fd, char *line)
+{
+	if (write(fd, line, ft_strlen(line)) == -1)
+		return (-1);
+	if (write(fd, "\n", 1) == -1)
+		return (-1);
+	return (0);
 }
 
 void	clean_line(char *line)
@@ -74,12 +81,4 @@ void	clean_line(char *line)
 	while (*trimmed_line && *trimmed_line != '\n')
 		trimmed_line++;
 	*trimmed_line = '\0';
-}
-
-void	write_line_to_fd(int fd, char *line)
-{
-	if (write(fd, line, ft_strlen(line)) == -1)
-		perror("ERROR(write the line to fd)");
-	if (write(fd, "\n", 1) == -1)
-		perror("ERROR(write new line to fd)");
 }
