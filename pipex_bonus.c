@@ -32,7 +32,7 @@ int	pipex_bonus(int argc, char **argv, char **envp)
 		num = 2;
 		fd_in = file_opener(argv[1], 'I');
 		if (dup2(fd_in, STDIN_FILENO) == -1)
-			ft_perror("ERROR(dup2 input multiple pipe)");
+			ft_putstr_fd("dup2 error\n", 2);
 		close(fd_in);
 		fd_out = file_opener(argv[argc - 1], 'O');
 	}

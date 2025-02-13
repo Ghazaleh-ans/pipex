@@ -10,7 +10,7 @@ int file_opener(char *path, char flag)
 	{
 		fd = open(path, O_RDONLY);
 		if (fd == -1)
-			ft_perror(path);
+			perror(path);
 	}
 	else if (flag == 'O')
 	{
