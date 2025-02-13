@@ -33,7 +33,8 @@ int	pipex_bonus(int argc, char **argv, char **envp)
 		fd_in = file_opener(argv[1], 'I');
 		if (dup2(fd_in, STDIN_FILENO) == -1)
 			ft_putstr_fd("dup2 error\n", 2);
-		close(fd_in);
+		if (fd_in != -1)
+			close(fd_in);
 		fd_out = file_opener(argv[argc - 1], 'O');
 	}
 	process_commands(argv, envp, num, argc, &last_status);

@@ -4,12 +4,10 @@ void	child_process(int *fd, char *cmd, char **envp)
 {
 	close(fd[0]);
 	if (dup2(fd[1], STDOUT_FILENO) == -1)
-	{
-		close(fd[1]);
-		exit(1);
-	}
+		ft_putstr_fd("dup2 error\n", 2);
 	close(fd[1]);
 	ft_exec(cmd, envp);
+	exit(0);
 }
 
 void	parent_process(int *fd, int pid, int *last_status)
@@ -18,10 +16,7 @@ void	parent_process(int *fd, int pid, int *last_status)
 
 	close(fd[1]);
 	if (dup2(fd[0], STDIN_FILENO) == -1)
-	{
-		close(fd[0]);
-		exit(1);
-	}
+		ft_putstr_fd("dup2 error\n", 2);
 	close(fd[0]);
 	waitpid(pid, &status, 0);
 	*last_status = (status & 0xFF00) >> 8;

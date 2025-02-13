@@ -10,13 +10,16 @@ int file_opener(char *path, char flag)
 	{
 		fd = open(path, O_RDONLY);
 		if (fd == -1)
+		{
+			ft_putstr_fd("open\n", 1);
 			perror(path);
+		}
 	}
 	else if (flag == 'O')
 	{
 		fd = open(path, O_CREAT | O_WRONLY | O_TRUNC, 0777);
 		if (fd == -1)
-			ft_perror(path);
+			perror(path);
 	}
 	else if (flag == 'h')
 	{
@@ -101,5 +104,5 @@ void	ft_exec(char *cmd, char **envp)
 	}
 	free_array(commands);
 	free_array(paths);
-	exit(1);
+	exit(127);
 }

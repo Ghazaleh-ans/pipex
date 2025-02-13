@@ -26,7 +26,7 @@ void	ft_exec(char *cmd, char **envp)
 	}
 	free_array(commands);
 	free_array(paths);
-	exit(1);
+	exit(127);
 }
 
 void	first_cmd_exec(int *fd, char **argv, char **envp)
@@ -41,8 +41,8 @@ void	first_cmd_exec(int *fd, char **argv, char **envp)
 	if (dup2(fd[1], STDOUT_FILENO) == -1)
 		ft_putstr_fd("dup2 error\n", 2);
 	close(fd[0]);
-	if (fd_in != -1)
-		close(fd_in);
+	//if (fd_in != -1)
+	close(fd_in);
 	close(fd[1]);
 	ft_exec(argv[2], envp);
 	exit(0);

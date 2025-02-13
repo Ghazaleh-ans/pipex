@@ -28,7 +28,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	if (!substr)
 		return (NULL);
 	ft_strlcpy(substr, s + start, len + 1);
-	substr[len + 1] = '\0';
+	substr[len] = '\0';
 	return (substr);
 }
 /*
