@@ -30,6 +30,7 @@ int	pipex_bonus(int argc, char **argv, char **envp)
 	int	fd_out;
 	int	last_status;
 
+	last_status = 0;
 	if (ft_strcmp(argv[1], "here_doc") == 0)
 		setup_here_doc(argc, argv, &num, &fd_out);
 	else
@@ -44,7 +45,7 @@ int	pipex_bonus(int argc, char **argv, char **envp)
 		fd_out = file_opener(argv[argc - 1], 'O');
 	}
 	while (num < argc - 2)
-		exec_cmd(argv[num++], envp, last_status);
+		exec_cmd(argv[num++], envp, &last_status);
 	if (dup2(fd_out, STDOUT_FILENO) == -1)
 		ft_perror("ERROR(dup2 output)");
 	close(fd_out);
