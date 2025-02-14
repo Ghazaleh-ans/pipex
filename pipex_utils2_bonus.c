@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_utils2_bonus.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/14 14:48:33 by gansari           #+#    #+#             */
+/*   Updated: 2025/02/14 14:48:35 by gansari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex_bonus.h"
 
 void	child_process(int *fd, char *cmd, char **envp)
@@ -37,7 +49,8 @@ void	exec_cmd(char *cmd, char **envp, int *last_status)
 	parent_process(fd, pid, last_status);
 }
 
-void	execute_final_command(char **argv, char **envp, int argc, int *last_status)
+void	execute_final_command(char **argv, char **envp, int argc,
+		int *last_status)
 {
 	int	pid;
 	int	status;

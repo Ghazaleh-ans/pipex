@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/14 14:47:25 by gansari           #+#    #+#             */
+/*   Updated: 2025/02/14 14:47:32 by gansari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 void	ft_exec(char *cmd, char **envp)
@@ -35,15 +47,22 @@ void	first_cmd_exec(int *fd, char **argv, char **envp)
 
 	fd_in = open(argv[1], O_RDONLY);
 	if (fd_in < 0)
+	{
+		fd_in = open("/dev/null", O_RDONLY);
 		perror(argv[1]);
-	if (dup2(fd_in, STDIN_FILENO) == -1)
-		ft_putstr_fd("dup2 error\n", 2);
+	}
+	if (fd_in > 0)
+	{
+		if (dup2(fd_in, STDIN_FILENO) == -1)
+			ft_putstr_fd("dup2 error\n", 2);
+		close(fd_in);
+	}
 	if (dup2(fd[1], STDOUT_FILENO) == -1)
 		ft_putstr_fd("dup2 error\n", 2);
 	close(fd[0]);
-	//if (fd_in != -1)
-	close(fd_in);
 	close(fd[1]);
+	if (fd_in != -1)
+		close(fd_in);
 	ft_exec(argv[2], envp);
 	exit(0);
 }
@@ -51,7 +70,7 @@ void	first_cmd_exec(int *fd, char **argv, char **envp)
 void	second_cmd_exec(int *fd, char **argv, char **envp)
 {
 	int	fd_out;
-	
+
 	fd_out = open(argv[4], O_CREAT | O_WRONLY | O_TRUNC, 0777);
 	if (fd_out < 0)
 	{

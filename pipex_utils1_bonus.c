@@ -1,9 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_utils1_bonus.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/14 14:48:10 by gansari           #+#    #+#             */
+/*   Updated: 2025/02/14 14:48:21 by gansari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
 #include "pipex_bonus.h"
 
-int file_opener(char *path, char flag)
+int	file_opener(char *path, char flag)
 {
-	int fd;
+	int	fd;
 
 	fd = -1;
 	if (flag == 'I')

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex_bonus.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: gansari <gansari@student.42berlin.de>      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/02/14 14:55:02 by gansari           #+#    #+#             */
+/*   Updated: 2025/02/14 14:55:04 by gansari          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef PIPEX_BONUS_H
 # define PIPEX_BONUS_H
 
@@ -19,8 +31,8 @@ void	second_cmd_exec(int *fd, char **argv, char **envp);
 int		pipex_bonus(int argc, char **argv, char **envp);
 void	exec_cmd(char *cmd, char **envp, int *last_status);
 void	ft_exec(char *cmd, char **envp);
-void execute_final_command(char **argv, char **envp, int argc, int *last_status);
-void	process_commands(char **argv, char **envp, int num, int argc, int *last_status);
+void	execute_final_command(char **argv, char **envp,
+			int argc, int *last_status);
 
 /* Heredoc functions */
 void	setup_here_doc(int argc, char **argv, int *num, int *fd_out);
@@ -40,6 +52,5 @@ void	free_array(char **arr_to_free);
 void	child_process(int *fd, char *cmd, char **envp);
 void	parent_process(int *fd, int pid, int *last_status);
 char	*find_executable(char **paths, char *cmd);
-
 
 #endif
