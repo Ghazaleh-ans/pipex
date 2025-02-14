@@ -14,6 +14,5 @@
 
 int	main(int argc, char **argv, char **envp)
 {
-	pipex(argc, argv, envp);
-	return (0);
+	return (pipex(argc, argv, envp));
 }
